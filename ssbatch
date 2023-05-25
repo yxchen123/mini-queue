@@ -1,4 +1,4 @@
-#!/Users/chenyanxu/opt/anaconda3/bin/python
+#!/opt/Anaconda3/2022.05/bin_nompi/python
 import sys
 import os
 import time

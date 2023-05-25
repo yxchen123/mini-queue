@@ -1,4 +1,4 @@
-#!/Users/chenyanxu/opt/anaconda3/bin/python
+#!/opt/Anaconda3/2022.05/bin_nompi/python
 import sys
 import os
 import time
@@ -19,16 +19,16 @@ queue_task_info = []
 for i in queue_info:
     queue_task_info.append(parse_task_info(i))
 
-current_time = time.time()
+current_time = int(time.time())
 
 #将queue_info.dat中状态为R的任务计算其运行的时间
 for i in range(len(queue_task_info)):
     if queue_task_info[i]['ST'] == 'R':
-        queue_task_info[i]['TIME'] = time_stamp(current_time - int(queue_task_info[i]['Date']))
+        queue_task_Date = round(float(queue_task_info[i]['Date']))
+        queue_task_info[i]['TIME'] = time_stamp(current_time - queue_task_Date)
 
 print_head = ['TASKID', 'NAME', 'ST', 'TIME', 'NodeList']
 #左对齐，每个字段宽度为10
-
 #打印表头
 for i in print_head:
     print('{:<15}'.format(i), end='')
