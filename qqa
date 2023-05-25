@@ -1,0 +1,40 @@
+#!/Users/chenyanxu/opt/anaconda3/bin/python
+import sys
+import os
+import time
+from tool import parse_task_info, time_stamp
+
+#遍历环境变量PATH，找到指定文件，并读取，返回读取的内容
+def find_file(file_name):
+    for i in os.environ['PATH'].split(':'):
+        if os.path.exists(i + '/' + file_name):
+            with open(i + '/' + file_name, 'r') as f:
+                lines = f.readlines()
+                return lines
+
+queue_info = find_file('queue_info.dat')
+history_task = find_file('history_task.dat')
+
+queue_task_info = []
+for i in queue_info:
+    queue_task_info.append(parse_task_info(i))
+
+current_time = time.time()
+
+#将queue_info.dat中状态为R的任务计算其运行的时间
+for i in range(len(queue_task_info)):
+    if queue_task_info[i]['ST'] == 'R':
+        queue_task_info[i]['TIME'] = time_stamp(current_time - int(queue_task_info[i]['Date']))
+
+print_head = ['TASKID', 'NAME', 'ST', 'TIME', 'NodeList']
+#左对齐，每个字段宽度为10
+
+#打印表头
+for i in print_head:
+    print('{:<15}'.format(i), end='')
+print()
+#打印表格内容
+for i in queue_task_info:
+    for j in print_head:
+        print('{:<15}'.format(i[j]), end='')
+    print()

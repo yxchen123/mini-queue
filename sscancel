@@ -1,0 +1,23 @@
+#!/Users/chenyanxu/opt/anaconda3/bin/python
+import sys
+import fcntl
+from tool import parse_task_info, find_file_path
+
+cancel_task_id = sys.argv[1]
+queue_info = find_file_path('queue_info.dat')
+
+with open(queue_info, 'r') as f:
+    fcntl.flock(f, fcntl.LOCK_EX)
+    lines = f.readlines()
+    parse_lines = []
+    for i in lines:
+        parse_lines.append(parse_task_info(i))
+    for n, i in enumerate(parse_lines):
+        if i['TASKID'] == cancel_task_id:
+            parse_lines[n]['ST'] = 'C'
+            break
+    with open(queue_info, 'w') as f1:
+        for i in parse_lines:
+            values = list(i.values())
+            f1.write(str(values).strip('[]').replace("'", "")+ '\n')
+    fcntl.flock(f, fcntl.LOCK_UN)

@@ -1,0 +1,28 @@
+#!/Users/chenyanxu/opt/anaconda3/bin/python
+import time
+from tool import parse_task_info, find_file
+
+# Function to find a file in the PATH environment variable and read its contents
+
+
+queue_info = find_file('queue_info.dat')
+history_task = find_file('history_task.dat')
+
+queue_task_info = []
+for i in queue_info:
+    queue_task_info.append(parse_task_info(i))
+
+current_time = time.time()
+
+print_head = ['TASKID', 'ST', 'WorkDir']
+# Left-align each field with a width of 10
+
+# Print the table header
+for i in print_head:
+    print('{:<15}'.format(i), end='')
+print()
+# Print the table content
+for i in queue_task_info:
+    for j in print_head:
+        print('{:<15}'.format(i[j]), end='')
+    print()
