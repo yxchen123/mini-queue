@@ -41,7 +41,7 @@ def find_file_path(file_name):
 
 queue_info_path = find_file_path('queue_info.dat')
 nodelist = sys.argv[1]
-
+task_cache_file=find_file_path('__task_cache__')
 #解析queue_info.dat文件
 with open(queue_info_path, 'r') as f:
     lines = f.readlines()
@@ -73,7 +73,7 @@ while True:
         NAME=parse_lines[n]['NAME']
         #将任务交到后台执行，并拿到任务的pid
         os.chdir(WorkDir)
-        command = ["bash", NAME]
+        command = ["bash", f'{task_cache_file}/task_{TASKID}.sh']
         process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         pid = process.pid
 
@@ -109,5 +109,8 @@ while True:
             values = list(i.values())
             f.write(str(values).strip('[]').replace("'", "")+ '\n')
         fcntl.flock(f, fcntl.LOCK_UN)
+    
+    #将__task_cache__文件夹中的任务脚本删除
+    os.remove(f'{task_cache_file}/task_{TASKID}.sh')
             
             

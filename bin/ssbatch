@@ -23,8 +23,12 @@ state = 'PD'
 date = int(time.time())
 nodelist = '(Priority)'
 task_info = [task_id, job_name, state,  run_time, workdir, date, nodelist]
+task_cache_file=find_file_path('__task_cache__')
 
-
+#将任务脚本复制到__task_cache__文件中
+os.system(f'cp {os.path.join(workdir, job_name)} {task_cache_file}/task_{task_id}.sh')
+os.system(f'chmod +x {task_cache_file}/task_{task_id}.sh')
+print(f"Submit mini-queue batch job {task_id}")
 #将task_info写入queue_info.dat文件
 with open(queue_info_path, 'a') as f:
     #去掉[]和''，并且用,分隔
