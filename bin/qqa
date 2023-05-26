@@ -1,8 +1,8 @@
-#!/opt/Anaconda3/2022.05/bin_nompi/python
+#!/opt/Anaconda3/2022.05/bin/python
 import sys
 import os
 import time
-from tool import parse_task_info, time_stamp
+from tool import *
 
 #遍历环境变量PATH，找到指定文件，并读取，返回读取的内容
 def find_file(file_name):
@@ -18,6 +18,9 @@ history_task = find_file('history_task.dat')
 queue_task_info = []
 for i in queue_info:
     queue_task_info.append(parse_task_info(i))
+
+
+
 
 current_time = int(time.time())
 

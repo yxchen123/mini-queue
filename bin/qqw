@@ -1,4 +1,4 @@
-#!/opt/Anaconda3/2022.05/bin_nompi/python
+#!/opt/Anaconda3/2022.05/bin/python
 import time
 from tool import parse_task_info, find_file
 
