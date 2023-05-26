@@ -7,7 +7,7 @@ Supercomputer center subqueue system, to achieve the function of exclusive compu
 cd /Any_path_you_like;
 git clone https://github.com/yxchen123/mini-queue.git
 cd mini-queue;
-./set_up.sh;
+./setup.sh;
 source ~/.bashrc;
 ```
 
