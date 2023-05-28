@@ -4,9 +4,9 @@ import fcntl
 from tool import parse_task_info, find_file_path
 
 cancel_task_id = sys.argv[1]
-queue_info = find_file_path('queue_info.dat')
+queue_info_path = find_file_path('queue_info.dat')
 
-with open(queue_info, 'r') as f:
+with open(queue_info_path, 'r+') as f:
     fcntl.flock(f, fcntl.LOCK_EX)
     lines = f.readlines()
     parse_lines = []
@@ -16,8 +16,10 @@ with open(queue_info, 'r') as f:
         if i['TASKID'] == cancel_task_id:
             parse_lines[n]['ST'] = 'C'
             break
-    with open(queue_info, 'w') as f1:
-        for i in parse_lines:
-            values = list(i.values())
-            f1.write(str(values).strip('[]').replace("'", "")+ '\n')
+    f.seek(0)
+    f.truncate()
+    for i in parse_lines:
+        values = list(i.values())
+        f.write(str(values).strip('[]').replace("'", "")+ '\n')
+    
     fcntl.flock(f, fcntl.LOCK_UN)

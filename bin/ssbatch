@@ -3,7 +3,7 @@ import sys
 import os
 import time
 from tool import time_stamp, find_file_path
-
+import fcntl
 
 history_task_path = find_file_path('history_task.dat')
 queue_info_path = find_file_path('queue_info.dat')
@@ -16,24 +16,28 @@ with open(history_task_path, 'r') as f:
     else:
         task_id = int(lines[-1].split(',')[0]) + 1
 
-job_name = sys.argv[1]
-workdir = os.getcwd()
-run_time = time_stamp(0)
-state = 'PD'
-date = int(time.time())
-nodelist = '(Priority)'
-task_info = [task_id, job_name, state,  run_time, workdir, date, nodelist]
-task_cache_file=find_file_path('__task_cache__')
 
-#将任务脚本复制到__task_cache__文件中
-os.system(f'cp {os.path.join(workdir, job_name)} {task_cache_file}/task_{task_id}.sh')
-os.system(f'chmod +x {task_cache_file}/task_{task_id}.sh')
-print(f"Submit mini-queue batch job {task_id}")
 #将task_info写入queue_info.dat文件
 with open(queue_info_path, 'a') as f:
+    fcntl.flock(f, fcntl.LOCK_EX)
+    job_name = sys.argv[1]
+    workdir = os.getcwd()
+    run_time = time_stamp(0)
+    state = 'PD'
+    date = int(time.time())
+    nodelist = '(Priority)'
+    task_info = [task_id, job_name, state,  run_time, workdir, date, nodelist]
+    task_cache_file=find_file_path('__task_cache__')
+    #将任务脚本复制到__task_cache__文件中
+    os.system(f'cp {os.path.join(workdir, job_name)} {task_cache_file}/task_{task_id}.sh')
+    os.system(f'chmod +x {task_cache_file}/task_{task_id}.sh')
+    print(f"Submit mini-queue batch job {task_id}")
     #去掉[]和''，并且用,分隔
     f.write(str(task_info).strip('[]').replace("'", "") + '\n')
+    fcntl.flock(f, fcntl.LOCK_UN)
 
 with open(history_task_path, 'a') as f:
+    fcntl.flock(f, fcntl.LOCK_EX)
     #去掉[]和''，并且用,分隔
     f.write(str(task_info).strip('[]').replace("'", "") + '\n')
+    fcntl.flock(f, fcntl.LOCK_UN)

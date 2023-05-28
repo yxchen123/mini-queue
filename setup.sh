@@ -1,5 +1,11 @@
 #!/bin/bash
 
+#清除队列信息以及任务缓存
+rm __task_cache__/*;
+rm __detect_cache__/*;
+echo '' bin/history_task.dat;
+echo '' bin/queue_info.dat;
+
 setup_path=$PWD
 PYTHON=`which python`
 
