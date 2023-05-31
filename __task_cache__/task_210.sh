@@ -5,9 +5,10 @@ source alias.sh
 shopt -s  expand_aliases
 shopt expand_aliases
 
-#cp POSCAR ini_POSCAR
+cp POSCAR init_POSCAR
 cp CONTCAR POSCAR;
 incar;
+magmom_from_poscar.py;
 pre ispin vdw EDIFF_1E-05 EDIFFG_-0.03 NCORE_16;
 kpotcar;
 

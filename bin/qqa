@@ -1,5 +1,5 @@
 #!/opt/Anaconda3/2022.05/bin/python
-import sys
+import fcntl
 import os
 import time
 from tool import *
@@ -9,7 +9,10 @@ def find_file(file_name):
     for i in os.environ['PATH'].split(':'):
         if os.path.exists(i + '/' + file_name):
             with open(i + '/' + file_name, 'r') as f:
+                fcntl.flock(f, fcntl.LOCK_EX)
                 lines = f.readlines()
+                lines = [line for line in lines if line.strip()]
+                fcntl.flock(f, fcntl.LOCK_UN)
                 return lines
 
 queue_info = find_file('queue_info.dat')
@@ -18,9 +21,6 @@ history_task = find_file('history_task.dat')
 queue_task_info = []
 for i in queue_info:
     queue_task_info.append(parse_task_info(i))
-
-
-
 
 current_time = int(time.time())
 

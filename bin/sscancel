@@ -2,6 +2,7 @@
 import sys
 import fcntl
 from tool import parse_task_info, find_file_path
+import os
 
 cancel_task_id = sys.argv[1]
 queue_info_path = find_file_path('queue_info.dat')
@@ -9,17 +10,28 @@ queue_info_path = find_file_path('queue_info.dat')
 with open(queue_info_path, 'r+') as f:
     fcntl.flock(f, fcntl.LOCK_EX)
     lines = f.readlines()
+    if len(lines) == 0:
+        print("No task in queue")
+        fcntl.flock(f, fcntl.LOCK_UN)
+        exit(0)
     parse_lines = []
     for i in lines:
         parse_lines.append(parse_task_info(i))
     for n, i in enumerate(parse_lines):
         if i['TASKID'] == cancel_task_id:
+            pre_state = i['ST']
             parse_lines[n]['ST'] = 'C'
+            WorkDir = i['WorkDir']
             break
     f.seek(0)
     f.truncate()
-    for i in parse_lines:
-        values = list(i.values())
-        f.write(str(values).strip('[]').replace("'", "")+ '\n')
-    
+    if len(parse_lines) > 0:
+        for n, i in enumerate(parse_lines):
+            values = list(i.values())
+            f.write(str(values).strip('[]').replace("'", "")+'\n')
     fcntl.flock(f, fcntl.LOCK_UN)
+    print(f"Cancel task {cancel_task_id}")
+    #删除工作目录下的running文件
+    if pre_state == 'R':
+        os.system(f'rm {os.path.join(WorkDir, "running")}')
+    
